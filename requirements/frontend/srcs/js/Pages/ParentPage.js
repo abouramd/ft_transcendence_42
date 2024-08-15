@@ -341,7 +341,7 @@ export default class ParentPage {
       return key === username;
     });
 
-    if (matchedUsers.length === 0 || !matchedUsers) {
+    if (matchedUsers?.length === 0 || !matchedUsers) {
       this.searchResultid.innerHTML = 'No result!!!';
       return;
     }
@@ -366,8 +366,8 @@ export default class ParentPage {
       this.searchResultid = document.getElementById('searchResult');
       if (this.searchResultid) {
         this.UsersSearch = await this.getUsersForSearch();
-        document.getElementById('searchBox').addEventListener('keyup', (e) => { e.preventDefault(); this.inputSearchHandle(e) });
-        document.getElementById('searchbutton').addEventListener('click', async () => {
+        document?.getElementById('searchBox')?.addEventListener('keyup', (e) => { e?.preventDefault(); this.inputSearchHandle(e) });
+        document?.getElementById('searchbutton')?.addEventListener('click', async () => {
           this.UsersSearch = await this.getUsersForSearch();
           await this.inputSearchHandle({ target: { value: "" } });
         });

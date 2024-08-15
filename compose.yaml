@@ -36,12 +36,13 @@ services:
       - "9000:9000"
     networks:
       - pong
-    volumes:
-      - ./requirements/gameBack:/code
+    # volumes:
+    #   - ./requirements/gameBack:/code
     depends_on:
       - redis
       - users
       - matches
+    restart: on-failure
 
 
   # redis
@@ -52,6 +53,7 @@ services:
       - "6379:6379"
     networks:
       - pong
+    restart: on-failure
 
   useractivity:
     container_name: useractivity
@@ -59,8 +61,8 @@ services:
       context: ./requirements/userState/
     ports:
       - "5000:5000"
-    volumes:
-      - ./requirements/userState:/code
+    # volumes:
+    #   - ./requirements/userState:/code
     networks:
       - pong
     depends_on:
@@ -90,8 +92,9 @@ services:
       - .env
     networks:
       - pong
-    volumes:
-      - ./requirements/users/:/code
+    restart: on-failure
+    # volumes:
+    #   - ./requirements/users/:/code
 
   # users database
   users_db:
@@ -107,6 +110,7 @@ services:
       - postgres-users-data:/var/lib/postgresql/data
     env_file:
       - .env
+    restart: on-failure
 
   # matches service
   matches:
@@ -133,8 +137,9 @@ services:
       - .env
     networks:
       - pong
-    volumes:
-      - ./requirements/matches/:/code
+    restart: on-failure
+    # volumes:
+    #   - ./requirements/matches/:/code
 
   # matches database
   matches_db:
@@ -150,6 +155,7 @@ services:
       - postgres-matches-data:/var/lib/postgresql/data
     env_file:
       - .env
+    restart: on-failure
 
   # Kafka service
   kafka:
@@ -181,6 +187,7 @@ services:
       - "2181:2181"
     networks:
       - pong 
+    restart: on-failure
 
 networks:
   pong:

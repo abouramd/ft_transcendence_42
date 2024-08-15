@@ -4,7 +4,7 @@ EXPOSE 5000
 
 WORKDIR /code 
 
-# COPY . /code
+COPY . /code
 
 RUN apt update -y && apt upgrade -y 
 

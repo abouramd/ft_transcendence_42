@@ -1,3 +1,4 @@
+import SinglePageApp from "../SinglePageApp.js";
 import ParentPage from "./ParentPage.js";
 
 export default class Login42Page extends ParentPage {
@@ -33,7 +34,8 @@ export default class Login42Page extends ParentPage {
 
       if (jsonBody?.data?.createProfile42?.success === true) {
         console.log("valid code", jsonBody?.data?.createProfile42?.message);
-        ParentPage.setCookie('token', jsonBody?.data?.createProfile42?.token, { "Expires": new Date(Date.now() + 2 * (60 * 60 * 1000)) })
+        ParentPage.setCookie('token', jsonBody?.data?.createProfile42?.token, { "Expires": new Date(Date.now() + 2 * (60 * 60 * 1000)) });
+        SinglePageApp.refresh(false);
         throw { redirect: true, redirectTo: "/home", message: "you login with 42 code", type: "success" };
       }
       else {

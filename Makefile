@@ -7,7 +7,7 @@ stop:
 	docker compose stop
 
 clean:
-	docker compose down
+	docker compose down -t 3
 
 fclean:
-	docker compose down -v --rmi all
+	docker compose down -v --rmi all -t 3
