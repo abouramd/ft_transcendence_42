@@ -50,7 +50,7 @@ class QuadGameConsumer(AsyncWebsocketConsumer):
         group_id = game.game_id
         if not game.is_over:
             game.is_over = True
-            self.channel_layer.group_discard(
+            await self.channel_layer.group_discard(
                 group_id, self.scope["channel"])
             if any(player['id'] == player_id for player in game.team1):
                 game.loser_team = game.team1
@@ -63,9 +63,13 @@ class QuadGameConsumer(AsyncWebsocketConsumer):
             await self.handle_winner(game)
         try:
             game.task.cancel()
-            for player in game.players.values():
-                await self.channel_layer.group_discard(group_id, player["channel"])
-            del quad_games[group_id]
+            await self.channel_layer.group_discard(group_id,  self.scope["channel"])
+            for pad, player in game.players.items():
+                if player["id"] == player_id:
+                    del game.players[pad]
+                    break
+            if len(game.players) == 0:
+                del quad_games[group_id]
         except Exception:
             pass
 

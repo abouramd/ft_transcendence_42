@@ -9,7 +9,7 @@ from .duo_game import DuoGame
 from .events import GameEvent
 from .events import StatusCode
 from django.contrib.auth.models import AnonymousUser
-import logging
+
 
 
 
@@ -55,7 +55,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         group_id = game.game_id
         if not game.is_over:
                 game.is_over = True
-                self.channel_layer.group_discard(
+                await self.channel_layer.group_discard(
                     group_id, self.scope["channel"])
                 if player_id == game.players['top']['id']:
                     game.winner = game.players['bottom']
@@ -68,9 +68,13 @@ class GameConsumer(AsyncWebsocketConsumer):
                 await self.handle_winner(game)
         try:
             game.task.cancel()
-            for player in game.players.values():
-                await self.channel_layer.group_discard(group_id, player["channel"])
-            del duo_games[group_id]
+            await self.channel_layer.group_discard(group_id,  self.scope["channel"])
+            for pad, player in game.players.items():
+                if player["id"] == player_id:
+                    del game.players[pad]
+                    break
+            if len(game.players) == 0:
+                del duo_games[group_id]
         except Exception:
             pass
 
@@ -245,9 +249,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         return self.waiting_in_queue(player_id) or self.has_runnig_game(player_id)
 
     def waiting_in_queue(self, player_id):
-        logging.info(f"player_id:{player_id}")
         for player in players_queue:
-            logging.info(f"player {player}")
             if player["id"] == player_id:
                 return True
         return False
