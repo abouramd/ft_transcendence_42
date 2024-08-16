@@ -1,5 +1,6 @@
 import Pong from "./Pong.js";
-import { addTournamentStyles, removeTournamentStyles } from "./style.js";
+import ParentPage from "../../ParentPage.js";
+
 
 let players;
 let first_round_matches;
@@ -9,12 +10,17 @@ let current_round;
 
 const registerPlayer = () => {
   if (players.length === 4) {
-    alert("you can't have more than four players, you can start the tournament");
-    return;
+    return ParentPage.appendAlert("you can't have more than four players, but you can start the tournament");
   }
   const playerNameInput = document.getElementById('playerName');
   const playerName = playerNameInput.value.trim();
   if (playerName) {
+    if (players.includes(playerName)) {
+      return ParentPage.appendAlert("player name already exists");
+    }
+    if (playerName.length > 10) {
+      return ParentPage.appendAlert("player alias can't be longer than 10 characters");
+    }
     players.push(playerName);
     updatePlayerList();
     playerNameInput.value = '';
@@ -34,8 +40,7 @@ const updatePlayerList = () => {
 
 const planFirstRoundMatches = () => {
   if (players.length < 4) {
-    alert("you must have four players before starting");
-    return;
+    return ParentPage.appendAlert("you must have four players before starting");
   }
   first_round_matches = [];
   for (let i = 0; i < players.length; i += 2) {

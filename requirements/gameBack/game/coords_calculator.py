@@ -28,7 +28,7 @@ def cal_coords(n):
     coords["WALL_Y_POS"] = T_B_WALL_DIM["y"] / 2
 
     PAD_DIM = {
-        "x": coords["ARENA_DIMS"]["x"] / 10,
+        "x": T_B_WALL_DIM["x"] / 4,
         "y": L_R_WALL_DIM["y"] - coords["ARENA_DIMS"]["y"],
         "z": T_B_WALL_DIM["z"]
     }

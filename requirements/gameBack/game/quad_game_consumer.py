@@ -110,7 +110,7 @@ class QuadGameConsumer(AsyncWebsocketConsumer):
         await self.handle_winner(game)
 
     async def handle_collision(self, game):
-        game.ball["position"]["x"] = game.ball["position"]["z"] = 0
+        game.reset_ball()
         top_score = game.players["top"]["score"]
         bottom_score = game.players["bottom"]["score"]
         await self.channel_layer.group_send(game.game_id, {

@@ -4,6 +4,7 @@ import webSockets from "./webSocket.js";
 import {PADS_COLOR} from "./constants.js";
 import control from "./control.js";
 import notiWin from "./notiWin.js";
+import ParentPage from "../../ParentPage.js";
 
 const URL = `wss://${location.host}/ws/quad-game`;
 let ws;
@@ -57,7 +58,6 @@ const handleMessages = (event) => {
       case gameEvents.GAME_OVER:
           removeEventListener("keydown", keyEventListener);
           // TODO: notiWin should be updated to work for results of quad game
-          console.log(data);
           notiWin(data.winnerTeam, data.loserTeam, pong.parent);
           break;
   }
@@ -70,9 +70,9 @@ const handleSocketError = (event) => {
 
 const handleSocketClosure = (event) => {
   if (event.code === StatusCode.ALREADY_JOINED)
-      return displayText("You've already joined the game.");
+      return ParentPage.appendAlert("You've already joined the game.");
   if (event.code === StatusCode.UNAUTHENTICATED)
-      return displayText("You're not authenticated.");
+      return ParentPage.appendAlert("You're not authenticated.");
   displayText("An error occurred")
 };
 

@@ -4,6 +4,7 @@ import webSocket from "./webSocket.js";
 import notiWin from "./notiWin.js";
 import {PADS_COLOR} from "./constants.js";
 import control from "./control.js";
+import ParentPage from "../../ParentPage.js";
 
 const URL = `wss://${location.host}/ws/duo-game`
 let ws;
@@ -31,7 +32,6 @@ const handleMessages = (event) => {
 
     switch (type) {
         case gameEvents.START:
-            console.log(data)
             const pad = data.pad;
             pong.players = data.players;
             control(pong.parent, "", "#" + PADS_COLOR[pad].toString(16))
@@ -63,9 +63,9 @@ const handleSocketError = (event) => {
 
 const handleSocketClosure = (event) => {
     if (event.code === StatusCode.ALREADY_JOINED)
-        return displayText("You've already joined the game.");
+        return ParentPage.appendAlert("You've already joined the game.");
     if (event.code === StatusCode.UNAUTHENTICATED)
-        return displayText("You're not authenticated.");
+        return ParentPage.appendAlert("You're not authenticated.");
     displayText("An error occurred")
 };
 

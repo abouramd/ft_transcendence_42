@@ -65,14 +65,14 @@ export const BALL_COLOR = 0x196f3d
 
 /** ----------------- SPEEDS ------------------------- **/
 export const BALL_SPEED_X = 0.05
-export const BALL_SPEED_Z = 0.06
+export const BALL_SPEED_Z = 0.1
 export const PAD_SPEED = 0.2
-export const WIN_SCORE = 3
+export const WIN_SCORE = 7
 
 /** ------------------ ARENA && its objects coords -------------------- **/
 
 export default (n) => {
-    const ARENA_DIMS = n === 2 ? {x: 15, y: 1, z: 25} : {x: 25, y: 1, z: 25}
+    const ARENA_DIMS = n === 2 ? {x: 15, y: 1, z: 25} : {x:25, y: 1, z: 25}
 
     let coords = {
         ARENA_DIMS
@@ -100,7 +100,7 @@ export default (n) => {
     coords.WALL_Y_POS = coords.T_B_WALL_DIM.y / 2
 
     coords.PAD_DIM = Object.freeze({
-        x: coords.ARENA_DIMS.x / 10,
+        x: coords.T_B_WALL_DIM.x / 4,
         y: coords.L_R_WALL_DIM.y - coords.ARENA_DIMS.y,
         z: coords.T_B_WALL_DIM.z
     })

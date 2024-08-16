@@ -1,3 +1,4 @@
+import ParentPage from "../../ParentPage.js";
 import Pong from "./Pong.js";
 
 let players = [];
@@ -9,8 +10,7 @@ const soloPong = () => {
 
 const startGame = () => {
   if (players.length < 2) {
-    alert("you must have 2 players before starting");
-    return;
+    return ParentPage.appendAlert("you must have 2 players before starting");
   }
   document.querySelector("#content").innerHTML = ""
   const pong = new Pong(2, false, document.querySelector("#content"))
@@ -20,12 +20,17 @@ const startGame = () => {
 
 const registerPlayer = () => {
   if (players.length === 2) {
-    alert("you can't have more than two players, you can start the Game");
-    return;
+    return ParentPage.appendAlert("you can't have more than two players, but you can start the Game");
   }
   const playerNameInput = document.getElementById('playerName');
   const playerName = playerNameInput.value.trim();
   if (playerName) {
+    if (players.includes(playerName)) {
+      return ParentPage.appendAlert("player name already exists");
+    }
+    if (playerName.length > 10) {
+      return ParentPage.appendAlert("player alias can't be longer than 10 characters");
+    }
     players.push(playerName);
     updatePlayerList();
     playerNameInput.value = '';

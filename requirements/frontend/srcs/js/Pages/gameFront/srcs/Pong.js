@@ -23,6 +23,7 @@ class Pong {
     this.is_game_over = false;
     this.onGameEnd = null;
     this.players = null;
+    this.counter = 0;
   }
 
   setup() {
@@ -281,25 +282,39 @@ class Pong {
     const xColl = xDist <= coords.PAD_DIM.x / 2 + coords.BALL_DIM.x / 2;
 
     let zDist;
-    if (this.ball.position.z < 0)
+    let diff;
+    if (this.ball.position.z < 0) {
       zDist = Math.abs(this.pads.top.position.z - this.ball.position.z);
-    else zDist = Math.abs(this.pads.bottom.position.z - this.ball.position.z);
-    const zColl = zDist <= coords.PAD_DIM.z / 2 + coords.BALL_DIM.z / 2;
+      diff = this.pads.top.position.z < this.ball.position.z
+    }
+    else {
+      zDist = Math.abs(this.pads.bottom.position.z - this.ball.position.z);
+      diff = this.pads.bottom.position.z > this.ball.position.z;
+    }
+    const zMaxDist = coords.PAD_DIM.z / 2 + coords.BALL_DIM.z / 2
+    const zColl = (zDist <= zMaxDist && zDist >= zMaxDist - 0.1) && diff;
     return xColl && zColl;
   }
 
   checkVerPadColl() {
     let xDist;
-    if (this.ball.position.x < 0)
+    let diff;
+    if (this.ball.position.x < 0) {
       xDist = Math.abs(this.pads.left.position.x - this.ball.position.x);
-    else xDist = Math.abs(this.pads.right.position.x - this.ball.position.x);
-    const xColl = xDist <= coords.PAD_DIM.z / 2 + coords.BALL_DIM.x / 2;
+      diff = this.ball.position.x > this.pads.left.position.x;
+    }
+    else {
+      xDist = Math.abs(this.pads.right.position.x - this.ball.position.x);
+      diff = this.ball.position.x < this.pads.right.position.x;
+    }
+    const xMaxDist = coords.PAD_DIM.z / 2 + coords.BALL_DIM.x / 2;
+    const xColl = (xDist <= xMaxDist && xDist >= xMaxDist - 0.1) && diff;
 
     let zDist;
     if (this.ball.position.x < 0)
       zDist = Math.abs(this.pads.left.position.z - this.ball.position.z);
     else zDist = Math.abs(this.pads.right.position.z - this.ball.position.z);
-    const zColl = zDist <= coords.PAD_DIM.z / 2 + coords.BALL_DIM.z / 2;
+    const zColl = zDist <= coords.PAD_DIM.x / 2 + coords.BALL_DIM.z / 2;
     return xColl && zColl;
   }
 
@@ -396,11 +411,42 @@ class Pong {
     this.ball.z_dir = -1;
   }
 
+  resetBall() {
+    this.ball.position.x = this.ball.position.z = 0;
+    this.counter++;
+    const counter = this.counter % 4;
+    switch (counter) {
+      case 0:
+        // Top-right corner
+        this.ball.x_dir = 1;
+        this.ball.z_dir = -1;
+        console.log("Top-right corner")
+        break;
+      case 1:
+        // Bottom-left corner
+        this.ball.x_dir = -1;
+        this.ball.z_dir = 1;
+        console.log("Bottom-left corner")
+        break;
+      case 2:
+        // Top-left corner
+        this.ball.x_dir = -1;
+        this.ball.z_dir = -1;
+        console.log("Top-left corner")
+        break;
+      default:
+        // Bottom-right corner
+        this.ball.x_dir = 1;
+        this.ball.z_dir = 1;
+        console.log("Bottom-right corner")
+        break;
+    }
+  }
+
   moveBall() {
     if (this.nbrOfPlayers > 2) {
       if (this.checkHorWallColl() || this.checkVertWallColl()) {
-        this.ball.position.x = this.ball.position.z = 0;
-        return;
+        return this.resetBall();
       }
       if (this.checkHorPadColl())
         this.ball.z_dir = this.ball.position.z < 0 ? 1 : -1;
@@ -409,8 +455,7 @@ class Pong {
     }
     else {
       if (this.checkHorWallColl()) {
-        this.ball.position.x = this.ball.position.z = 0;
-        return;
+        return this.resetBall();
       }
       if (this.checkVertWallColl())
         this.ball.x_dir = this.ball.position.x < 0 ? 1 : -1;

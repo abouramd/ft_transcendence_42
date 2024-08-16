@@ -13,8 +13,8 @@ class DuoGame():
                 "z": 0,
             },
             "velocity": {
-                "x": 0.1,
-                "z": 0.2,
+                "x": 0.2,
+                "z": 0.3,
             },
             "dir": {
                 "x": 1,
@@ -44,11 +44,12 @@ class DuoGame():
             }
         }
         self.constants = {
-            "PAD_SPEED": 0.2,
+            "PAD_SPEED": 0.3,
         }
         self.winner = None
         self.loser = None
         self._type = None
+        self.counter = 0
 
     def set_players(self, player1, player2):
         self.players["top"]["id"] = player1["id"]
@@ -93,17 +94,21 @@ class DuoGame():
         else:
             xDist = abs(self.players["bottom"]["pad"]
                         ["position"]["x"] - self.ball["position"]["x"])
-        xColl = xDist <= self.coords["PAD_DIM"]["z"] / \
+        xColl = xDist <= self.coords["PAD_DIM"]["x"] / \
             2 + self.coords["BALL_DIM"]["x"] / 2
+        
         zDist = None
+        diff = None
         if self.ball["position"]["z"] < 0:
             zDist = abs(self.players["top"]["pad"]["position"]
                         ["z"] - self.ball["position"]["z"])
+            diff = self.players["top"]["pad"]["position"]["z"] < self.ball["position"]["z"]
         else:
             zDist = abs(self.players["bottom"]["pad"]
                         ["position"]["z"] - self.ball["position"]["z"])
-        zColl = zDist <= self.coords["PAD_DIM"]["z"] / \
-            2 + self.coords["BALL_DIM"]["z"] / 2
+            diff = self.players["bottom"]["pad"]["position"]["z"] > self.ball["position"]["z"]
+        zMaxDist = self.coords["PAD_DIM"]["z"] / 2 + self.coords["BALL_DIM"]["z"] / 2
+        zColl = (zDist <= zMaxDist and zDist >= zMaxDist - 0.3) and diff
         return xColl and zColl
 
     def update_ball_position(self):
@@ -142,3 +147,24 @@ class DuoGame():
             self.loser = self.players["top"]
             return True
         return False
+    
+    def reset_ball(self):
+        self.ball["position"]["x"] = self.ball["position"]["z"] = 0
+        self.counter += 1
+        rem = self.counter % 4
+        if rem == 0:
+            #  Top-right corner
+            self.ball["dir"]["x"] = 1
+            self.ball["dir"]["z"] = -1
+        elif rem == 1:
+            # Bottom-left corner
+            self.ball["dir"]["x"] = -1
+            self.ball["dir"]["z"] = 1
+        elif rem == 2:
+            # Top-left corner
+            self.ball["dir"]["x"] = -1
+            self.ball["dir"]["z"] = -1
+        else:
+            # 
+            self.ball["dir"]["x"] = 1
+            self.ball["dir"]["z"] = 1
