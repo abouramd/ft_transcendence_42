@@ -142,8 +142,6 @@ const displayTournamentBracket = (eventHandler = null) => {
                 <div class="matchup">
                     <div class="team empty">${results[0][0]}</div>
                     <div class="team empty">${results[0][1]}</div>
-                </div>
-                <div class="matchup">
                     <div class="team empty">${results[1][0]}</div>
                     <div class="team empty">${results[1][1]}</div>
                 </div>
