@@ -49,6 +49,7 @@ class QuadGameConsumer(AsyncWebsocketConsumer):
         player_id = self.scope['user']['id']
         group_id = game.game_id
         if not game.is_over:
+            game.interrupted = True
             game.is_over = True
             await self.channel_layer.group_discard(
                 group_id, self.scope["channel"])
@@ -111,7 +112,8 @@ class QuadGameConsumer(AsyncWebsocketConsumer):
             await self.send_ball_position(game)
             await asyncio.sleep(0.06)
         game.is_over = True
-        await self.handle_winner(game)
+        if not game.interrupted:
+            await self.handle_winner(game)
 
     async def handle_collision(self, game):
         game.reset_ball()

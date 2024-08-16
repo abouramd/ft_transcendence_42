@@ -9,7 +9,7 @@ from .duo_game import DuoGame
 from .events import GameEvent
 from .events import StatusCode
 from django.contrib.auth.models import AnonymousUser
-
+import logging
 
 
 
@@ -54,6 +54,8 @@ class GameConsumer(AsyncWebsocketConsumer):
         player_id = self.scope['user']['id']
         group_id = game.game_id
         if not game.is_over:
+                logging.info(f"player disconnected {player_id}")
+                game.interrupted = True
                 game.is_over = True
                 await self.channel_layer.group_discard(
                     group_id, self.scope["channel"])
@@ -110,7 +112,9 @@ class GameConsumer(AsyncWebsocketConsumer):
             await self.send_ball_position(game)
             await asyncio.sleep(0.06)
         game.is_over = True
-        await self.handle_winner(game)
+        logging.info("game loop finished")
+        if not game.interrupted:
+            await self.handle_winner(game)
 
     async def send_ball_position(self, game):
         await self.channel_layer.group_send(self.game_id, {
@@ -150,6 +154,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         }))
 
     async def handle_winner(self, game):
+        logging.info(f"handling winner called for {self.scope['user']['id']}")
         await self.channel_layer.group_send(game.game_id, {
             "type": "game.announce_result",
             "winner": {"username": game.winner["username"], "score": game.winner["score"]},

@@ -69,6 +69,7 @@ class QuadGame():
         self.winner_team = None
         self.loser_team = None
         self.counter = 0
+        self.interrupted = False
 
     def set_teams(self, team1, team2):
         self.players["top"]["id"] = team1[0]["id"]

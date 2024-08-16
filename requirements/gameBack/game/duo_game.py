@@ -50,6 +50,7 @@ class DuoGame():
         self.loser = None
         self._type = None
         self.counter = 0
+        self.interrupted = False
 
     def set_players(self, player1, player2):
         self.players["top"]["id"] = player1["id"]
